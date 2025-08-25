@@ -12,11 +12,16 @@ The combination of vision and audio has long been a topic of interest among rese
 
 
 ## 🛠️ Get Started
+```bash
+conda create -n segformer python=3.10
+```
 
 ### 1. Environments
 ```shell
 # recommended
-pip install torch==1.10.0+cu111 torchvision==0.11.0+cu111 torchaudio==0.10.0 -f https://download.pytorch.org/whl/torch_stable.html
+#pip install torch==1.10.0+cu111 torchvision==0.11.0+cu111 torchaudio==0.10.0 -f https://download.pytorch.org/whl/torch_stable.html
+# above did not work, used
+pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
 pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.10.0/index.html
 pip install pandas
 pip install timm
