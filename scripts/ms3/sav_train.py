@@ -14,6 +14,7 @@ from model import build_model
 from dataloader import build_dataset
 from loss import IouSemanticAwareLoss
 
+DURATION = 10
 
 def main():
     # Fix seed
@@ -84,7 +85,7 @@ def main():
             mask = mask.cuda()
             B, frame, C, H, W = imgs.shape
             imgs = imgs.view(B * frame, C, H, W)
-            mask_num = 5
+            mask_num = DURATION
             mask = mask.view(B * mask_num, 1, H, W)
             audio = audio.view(-1, audio.shape[2],
                                audio.shape[3], audio.shape[4])
