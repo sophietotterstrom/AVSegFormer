@@ -49,6 +49,23 @@ def decode_video(video_path: str) -> List[np.ndarray]:
             break
     return video_frames
 
+def decode_mask(mask_path):
+        # Check the structure of mask_data and handle accordingly
+    if isinstance(mask_data, dict) and 'counts' in mask_data:
+        # If it's already in the correct RLE format
+        mask_rle = mask_data
+    elif isinstance(mask_data, list) and len(mask_data) > 0 and 'counts' in mask_data[0]:
+        # If it's a list of RLE objects, use the first one or process as needed
+        mask_rle = mask_data[0]
+    else:
+        # Print the structure for debugging
+        print(f"Unexpected mask data format: {type(mask_data)}")
+        print(f"First few elements or keys: {list(mask_data.keys()) if isinstance(mask_data, dict) else mask_data[:2]}")
+        # Create a blank mask as fallback (adjust dimensions as needed)
+        mask_bin = np.zeros((self.cfg.img_size[0], self.cfg.img_size[1]), dtype=np.uint8)
+        # You might want to raise an exception instead
+        # raise ValueError(f"Invalid mask format in {mask_path}")
+
 
 class SAVDataset(Dataset):
     """Dataset for multiple sound source segmentation"""
@@ -81,7 +98,11 @@ class SAVDataset(Dataset):
         video_name = df_one_video[0]
         video_subdir = df_one_video[-1]
         
-        ######### parse paths #########      
+        ######### parse paths #########
+        video_path = os.path.join(
+            self.cfg.base_dir, video_subdir, f"{video_name}.mp4"
+        )
+
         mask_path = os.path.join(
             self.cfg.base_dir, video_subdir, f"{video_name}_manual.json"
         )
@@ -99,12 +120,12 @@ class SAVDataset(Dataset):
         ######### load data #########
         audio_log_mel = load_audio_lm(audio_lm_path)
 
+        # load video to frames
+        frames = decode_video(video_path)
+
         # decode mask from RLE format to frames
         mask_rle = json.load(open(mask_path))
-        mask_bin = mask_util.decode(mask_rle)
-
-        # load video to frames
-        frames = decode_video(mp4_path)
+        mask_bin = mask_util.decode(mask_rle["masklet"])
 
         print(mask_bin.shape)
         print(frames.shape)
