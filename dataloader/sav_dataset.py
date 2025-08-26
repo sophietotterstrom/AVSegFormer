@@ -6,6 +6,7 @@ from torch.utils.data import Dataset
 import numpy as np
 import pandas as pd
 import pickle
+from pathlib import Path
 
 import cv2
 from PIL import Image
@@ -13,7 +14,7 @@ from torchvision import transforms
 
 METADATA_FILE_NAME = "florence_base_captions.csv" # "metadata.csv"
 
-
+# old
 def load_image_in_PIL_to_Tensor(path, mode='RGB', transform=None):
     img_PIL = Image.open(path).convert(mode)
     if transform:
@@ -21,12 +22,23 @@ def load_image_in_PIL_to_Tensor(path, mode='RGB', transform=None):
         return img_tensor
     return img_PIL
 
-
+# old
 def load_audio_lm(audio_lm_path):
     with open(audio_lm_path, 'rb') as fr:
         audio_log_mel = pickle.load(fr)
     audio_log_mel = audio_log_mel.detach()  # [DURATION, 1, 96, 64]
     return audio_log_mel
+
+
+def rle_decode(rle):
+    """Decode RLE encoded mask using pycocotools."""
+    if isinstance(rle, dict) and 'counts' in rle:
+        # If it's already in the correct format, use it directly
+        return mask_util.decode(rle)
+    else:
+        # Handle string format RLE if needed
+        return None  # Implement as needed
+
 
 
 class SAVDataset(Dataset):
@@ -53,14 +65,24 @@ class SAVDataset(Dataset):
         self.df_split = df_all[df_all['split'] == split]
         print(f"{len(self.df_split)}/{df_all} videos are used for {self.split}")
         
+        
+        ## custom recursive handling
+        # Create a list to store all video data
+        self.all_videos = []
+        
+        # Get all subdirectories under base_dir
+        base_path = Path(cfg.base_dir)
+        subdirs = [d for d in base_path.iterdir() if d.is_dir()]
+        print(subdirs)
+        
         self.img_transform = transforms.Compose([
-            transforms.Resize([512, 512]),
+            transforms.Resize(cfg.img_size), # [512, 512]
             transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
         
         self.mask_transform = transforms.Compose([
-            transforms.Resize([512, 512]),
+            transforms.Resize(cfg.img_size), # [512, 512]
             transforms.ToTensor(),
         ])
 
@@ -69,9 +91,8 @@ class SAVDataset(Dataset):
         df_one_video = self.df_split.iloc[index]
         video_name = df_one_video[0]
         
-        # img path
         img_base_path = os.path.join(self.cfg.dir_img, video_name)
-        # mask path
+        
         mask_base_path = os.path.join(
             self.cfg.dir_mask, self.split, video_name
         )
