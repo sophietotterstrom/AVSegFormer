@@ -23,4 +23,7 @@ set -e
 
 # see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
-srun bash train.sh /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/AVSegFormer_pvt2_ms3_sav_debug.py
+srun bash train.sh \
+    "ms3" \
+    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/AVSegFormer_pvt2_ms3_sav_debug.py \
+    "sav_train.py"

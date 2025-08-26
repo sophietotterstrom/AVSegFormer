@@ -11,7 +11,7 @@
 #SBATCH --gres=gpu:v100:2,nvme:100
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-gpu=122500M
-#SBATCH --time=00:59:00
+#SBATCH --time=06:00:00
 
 export PATH="/scratch/project_2005102/sophie/segformer_conda/bin:$PATH"
 
@@ -23,4 +23,7 @@ set -e
 
 # see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
-srun bash train.sh /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/AVSegFormer_pvt2_ms3_sav.py
+srun bash train.sh \
+    "ms3" \
+    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/AVSegFormer_pvt2_ms3_sav.py \
+    "sav_train.py"
