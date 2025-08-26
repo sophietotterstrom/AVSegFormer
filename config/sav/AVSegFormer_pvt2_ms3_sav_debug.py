@@ -80,5 +80,5 @@ loss = dict(
     loss_type='dice')
 process = dict(
     num_works=8,
-    train_epochs=60,
+    train_epochs=2,
     freeze_epochs=10)

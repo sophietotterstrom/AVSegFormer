@@ -5,3 +5,5 @@ temp
 data
 pretrained
 work_dir
+
+sbatch_logs
