@@ -18,23 +18,16 @@ from typing import List
 
 FPS = 24
 
-# old
-def load_image_in_PIL_to_Tensor(path, mode='RGB', transform=None):
-    img_PIL = Image.open(path).convert(mode)
-    if transform:
-        img_tensor = transform(img_PIL)
-        return img_tensor
-    return img_PIL
 
-# old
 def load_audio_lm(audio_lm_path):
     with open(audio_lm_path, 'rb') as fr:
         audio_log_mel = pickle.load(fr)
-    audio_log_mel = audio_log_mel.detach()  # [DURATION, 1, 96, 64]
+    audio_log_mel = audio_log_mel.detach().float()  # [DURATION, 1, 96, 64]
     return audio_log_mel
 
-    
-# from sav_utils
+
+# function from from sav_utils
+# originally META's code from SAM-2 repo
 def decode_video(video_path: str) -> List[np.ndarray]:
     """
     Decode the video and return the RGB frames
@@ -79,7 +72,7 @@ class SAVDataset(Dataset):
         frame_norm = (frame_float - self.mean) / self.std
 
         # Convert to tensor and change format from HWC to CHW
-        img_tensor = torch.from_numpy(frame_norm).permute(2, 0, 1)
+        img_tensor = torch.from_numpy(frame_norm).permute(2, 0, 1).float()
         return img_tensor
 
     def _process_mask(self, mask_bin):        
