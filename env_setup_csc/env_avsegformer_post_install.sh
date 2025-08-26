@@ -7,5 +7,8 @@ pip install soundfile
 #pip install -U setuptools
 #pip install ninja
 
+# my additions
+pip install pycocotools
+
 cd /scratch/project_2005102/sophie/repos/AVSegFormer/ops
 sh make.sh
