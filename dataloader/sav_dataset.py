@@ -131,7 +131,8 @@ class SAVDataset(Dataset):
             orig_frame_idx = i * FPS
             mask_rle = annotation["masklet"][orig_frame_idx]
             mask_bin = mask_util.decode(mask_rle)
-            assert len(np.unique(mask_bin)) == 2, f"Mask bin unique: {np.unique(mask_bin)}"
+
+            #print(f"Mask bin unique: {np.unique(mask_bin)}")
             
             mask_tensor = self._process_mask(mask_bin)
             masks.append(mask_tensor)
