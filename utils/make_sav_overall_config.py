@@ -1,9 +1,15 @@
+"""
+
+Example use:
+python utils/make_sav_overall_config.py /scratch/project_2005102/sophie/sav/sav_train_out/sav_train_2708
+"""
+
 import os
 import pandas as pd
 import argparse
 from pathlib import Path
 
-METADATA_FILENAME = 'florence_base_captions.csv'
+METADATA_FILENAME = 'metadata.csv' #'florence_base_captions.csv'
 
 def find_metadata_files(root_dir):
     """Find all 'metadata.csv' files in subdirectories of root_dir."""
@@ -44,6 +50,10 @@ def combine_metadata(root_dir, output_file=None):
                 
             dfs.append(df)
             print(f"Processed: {subdirectory}")
+
+            ####### VALIDATION SPLIT #######
+            # make 10% of the files in this dir a part of the validation split
+            
         except Exception as e:
             print(f"Error processing {file_path}: {str(e)}")
     

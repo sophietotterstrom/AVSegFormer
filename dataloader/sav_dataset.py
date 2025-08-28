@@ -57,6 +57,10 @@ class SAVDataset(Dataset):
         df_all = pd.read_csv(cfg.anno_csv, sep=',')
         self.df_split = df_all[df_all['split'] == split]
         print(f"{len(self.df_split)}/{len(df_all)} videos are used for {self.split}")
+
+        # TODO remove when implemented in the pipeline itself
+        df_split_temp = df_all[df_all['split'] == split]
+        self.df_split = df_split_temp[df_split_temp['caption'] != "no object detected"]
         
         # ImageNet normalization parameters
         self.mean = np.array([0.485, 0.456, 0.406])
