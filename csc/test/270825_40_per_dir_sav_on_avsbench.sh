@@ -24,7 +24,7 @@ module load cuda/11
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
 
 bash test.sh \
-    "ms3" \
+    "s4" \
     "config/sav/pvt2/AVSegFormer_pvt2_ms3_sav_avsbench_test.py" \
     "work_dir/AVSegFormer_pvt2_ms3_sav/2608_40_per_dir_MS3_best.pth" 
     #--save_pred_mask
