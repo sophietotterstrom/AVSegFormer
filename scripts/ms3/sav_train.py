@@ -28,9 +28,9 @@ def main():
     log_name = time.strftime('%Y%m%d-%H%M%S', time.localtime())
     dir_name = os.path.splitext(os.path.split(args.cfg)[-1])[0]
     if not os.path.exists(args.log_dir):
-        os.mkdir(args.log_dir)
+        os.mkdir(args.log_dir, exist_ok=True)
     if not os.path.exists(os.path.join(args.log_dir, dir_name)):
-        os.mkdir(os.path.join(args.log_dir, dir_name))
+        os.makedirs(os.path.join(args.log_dir, dir_name), exist_ok=True)
     log_file = os.path.join(args.log_dir, dir_name, f'{log_name}.log')
     logger = getLogger(log_file, __name__)
     logger.info(f'Load config from {args.cfg}')
