@@ -25,5 +25,5 @@ set -e
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
 srun bash train.sh \
     "ms3" \
-    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/0909_sav_duration5s_epochs1.py \
+    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/0909_epochs5.py \
     "sav_train.py"
