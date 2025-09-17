@@ -4,11 +4,11 @@ pip install pandas
 pip install timm
 pip install resampy
 pip install soundfile
-#pip install -U setuptools
-#pip install ninja
 
-# my additions
+pip install -U setuptools
+pip install ninja
 pip install pycocotools
 
+# for first time running this post-install script, comment these out
 cd /scratch/project_2005102/sophie/repos/AVSegFormer/ops
 sh make.sh
