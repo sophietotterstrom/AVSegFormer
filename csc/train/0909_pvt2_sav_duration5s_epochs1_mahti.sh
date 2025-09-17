@@ -9,25 +9,21 @@
 #SBATCH --partition=gpusmall
 #SBATCH --ntasks-per-node=2
 #SBATCH --gres=gpu:a100:2,nvme:100
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=10
 #SBATCH --mem-per-gpu=122500M
-#SBATCH --time=36:00:00
+#SBATCH --time=04:00:00
 
 export PATH="/scratch/project_2005102/sophie/segformer_conda/bin:$PATH"
 
 module load tykky
 module load gcc/11
-module load cuda/11.5
-
-# to avoid OoO errors
-export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:64
-
+module load cuda/11
 
 set -e
 
 # see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
 srun bash train.sh \
-    "s4" \
-    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/0909_epochs1_sav-pretrained_s4.py \
-    "train.py"
+    "ms3" \
+    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/0909_duration5s_epochs1.py \
+    "sav_train.py"

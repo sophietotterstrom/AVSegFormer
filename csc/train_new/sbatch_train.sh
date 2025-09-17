@@ -19,15 +19,11 @@ module load tykky
 module load gcc/11
 module load cuda/11.5
 
-# to avoid OoO errors
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:64
-
 
 set -e
 
-# see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
-srun bash train.sh \
-    "s4" \
-    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/0909_epochs1_sav-pretrained_s4.py \
-    "train.py"
+
+# Pass the config file as an argument to train.sh
+srun bash train.sh "$1"
