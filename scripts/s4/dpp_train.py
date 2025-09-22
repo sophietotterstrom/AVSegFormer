@@ -14,10 +14,20 @@ from model import build_model
 from dataloader import build_dataset
 from loss import IouSemanticAwareLoss
 
-import sys
+# DPP
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel
+from torch.utils.data.distributed import DistributedSampler
+from torch.utils.data import DataLoader
 
 
 def main():
+    # dpp
+    dist.init_process_group(backend='nccl')
+    local_rank = int(os.environ['LOCAL_RANK'])
+    torch.cuda.set_device(local_rank)
+
+
     # Fix seed
     FixSeed = 123
     random.seed(FixSeed)
@@ -42,21 +52,38 @@ def main():
     checkpoint_dir = os.path.join(args.checkpoint_dir, dir_name)
 
     # model
-    model = build_model(**cfg.model)
-    model = torch.nn.DataParallel(model).cuda()
+    #model = build_model(**cfg.model)
+    #model = torch.nn.DataParallel(model).cuda()
+    model = build_model(**cfg.model).cuda()
+    model = DistributedDataParallel(
+        model, 
+        device_ids=[local_rank],
+        find_unused_parameters=True
+    )
+    
     model.train()
     logger.info("Total params: %.2fM" % (sum(p.numel()
                 for p in model.parameters()) / 1e6))
 
     # dataset
     train_dataset = build_dataset(**cfg.dataset.train)
-    train_dataloader = torch.utils.data.DataLoader(train_dataset,
-                                                   batch_size=cfg.dataset.train.batch_size,
-                                                   shuffle=True,
-                                                   num_workers=cfg.process.num_works,
-                                                   pin_memory=True)
+    #train_dataloader = torch.utils.data.DataLoader(train_dataset,
+    #                                               batch_size=cfg.dataset.train.batch_size,
+    #                                               shuffle=True,
+    #                                               num_workers=cfg.process.num_works,
+    #                                               pin_memory=True)
+    train_sampler = DistributedSampler(train_dataset)
+    train_dataloader = DataLoader(
+        dataset=train_dataset, 
+        sampler=train_sampler, 
+        batch_size=cfg.dataset.train.batch_size,
+        shuffle=False,
+        num_workers=cfg.process.num_works,
+        pin_memory=True
+    )
     max_step = (len(train_dataset) // cfg.dataset.train.batch_size) * \
         cfg.process.train_epochs
+    
     val_dataset = build_dataset(**cfg.dataset.val)
     val_dataloader = torch.utils.data.DataLoader(val_dataset,
                                                  batch_size=cfg.dataset.val.batch_size,
@@ -79,7 +106,6 @@ def main():
             model.module.freeze_backbone(False)
 
         for n_iter, batch_data in enumerate(train_dataloader):
-            # [bs, 5, 3, 224, 224], [bs, 5, 1, 96, 64], [bs, 1, 1, 224, 224]
             imgs, audio, mask = batch_data
 
             imgs = imgs.cuda()
@@ -88,10 +114,11 @@ def main():
             B, frame, C, H, W = imgs.shape
             imgs = imgs.view(B * frame, C, H, W)
             mask = mask.view(B, H, W)
+
             audio = audio.view(-1, audio.shape[2],
                                audio.shape[3], audio.shape[4])
 
-            output, mask_feature = model(audio, imgs)  # [bs*5, 1, 224, 224]
+            output, mask_feature = model(audio, imgs)
             loss, loss_dict = IouSemanticAwareLoss(
                 output, mask_feature, mask.unsqueeze(1).unsqueeze(1), **cfg.loss)
             loss_util.add_loss(loss, loss_dict)
@@ -100,21 +127,17 @@ def main():
             optimizer.step()
 
             global_step += 1
-
-            if (global_step - 1) % 50 == 0:
+            if (global_step - 1) % 20 == 0:
                 train_log = 'Iter:%5d/%5d, %slr: %.6f' % (
                     global_step - 1, max_step, loss_util.pretty_out(), optimizer.param_groups[0]['lr'])
                 logger.info(train_log)
-            
-            # to try to avoid OoO errors
-            torch.cuda.empty_cache()
 
         # Validation:
         model.eval()
         with torch.no_grad():
             for n_iter, batch_data in enumerate(val_dataloader):
                 # [bs, 5, 3, 224, 224], [bs, 5, 1, 96, 64], [bs, 5, 1, 224, 224]
-                imgs, audio, mask, _, _ = batch_data
+                imgs, audio, mask = batch_data
 
                 imgs = imgs.cuda()
                 audio = audio.cuda()
@@ -159,8 +182,8 @@ if __name__ == '__main__':
                         default='work_dir', help='log dir')
     parser.add_argument('--checkpoint_dir', type=str,
                         default='work_dir', help='dir to save checkpoints')
-    parser.add_argument("--session_name", default="S4",
-                        type=str, help="the S4 setting")
+    parser.add_argument("--session_name", default="MS3",
+                        type=str, help="the MS3 setting")
 
     args = parser.parse_args()
     main()
