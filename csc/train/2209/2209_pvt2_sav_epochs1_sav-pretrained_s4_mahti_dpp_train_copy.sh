@@ -6,9 +6,9 @@
 #SBATCH --error=./sbatch_logs/%J.log
 #SBATCH --verbose
 #SBATCH --nodes=1
-#SBATCH --partition=gpumedium
-#SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:a100:4,nvme:100
+#SBATCH --partition=gpusmall
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:a100:2,nvme:100
 #SBATCH --cpus-per-task=32
 #SBATCH --mem-per-gpu=122500M
 #SBATCH --time=36:00:00
@@ -43,7 +43,7 @@ export RDZV_PORT=29400
 
 srun torchrun \
     --nnodes=$SLURM_JOB_NUM_NODES \
-    --nproc_per_node=4 \
+    --nproc_per_node=1 \
     --rdzv_id=$SLURM_JOB_ID \
     --rdzv_backend=c10d \
     --rdzv_endpoint="$RDZV_HOST:$RDZV_PORT" \

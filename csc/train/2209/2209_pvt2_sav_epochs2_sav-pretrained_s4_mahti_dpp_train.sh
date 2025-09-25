@@ -22,15 +22,10 @@ set -e
 # see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
 
-#srun bash train.sh \
-#    "s4" \
-#    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1709/1709_epochs1_sav-pretrained_s4.py \
-#    "dpp_train.py"
-
 SESSION="s4"
 TRAIN_FILE="dpp_train.py"
 TRAIN_FILE_PATH="scripts/$SESSION/$TRAIN_FILE"
-CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1709/1709_epochs1_sav-pretrained_s4.py"
+CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1709/1709_epochs2_sav-pretrained_s4.py"
 
 #PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 export PYTHONPATH="${PYTHONPATH}:/scratch/project_2005102/sophie/repos/AVSegFormer"
@@ -38,8 +33,6 @@ export PYTHONPATH="${PYTHONPATH}:/scratch/project_2005102/sophie/repos/AVSegForm
 export RDZV_HOST=$(hostname)
 export RDZV_PORT=29400
 
-#cp /scratch/project_2000936/viertoli/datasets/AVSSBench.tar.gz $LOCAL_SCRATCH
-#tar -xzf $LOCAL_SCRATCH/AVSSBench.tar.gz -C $LOCAL_SCRATCH
 
 srun torchrun \
     --nnodes=$SLURM_JOB_NUM_NODES \

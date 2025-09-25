@@ -20,6 +20,12 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
 
+# issues
+os.environ['NCCL_BLOCKING_WAIT'] = '1'
+os.environ['NCCL_ASYNC_ERROR_HANDLING'] = '1'
+# Increase timeout (default is usually 30 minutes)
+os.environ['NCCL_HEARTBEAT_TIMEOUT_SEC'] = '300'
+
 
 def main():
     # dpp
