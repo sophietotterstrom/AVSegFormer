@@ -143,7 +143,7 @@ def main():
         with torch.no_grad():
             for n_iter, batch_data in enumerate(val_dataloader):
                 # [bs, 5, 3, 224, 224], [bs, 5, 1, 96, 64], [bs, 5, 1, 224, 224]
-                imgs, audio, mask = batch_data
+                imgs, audio, mask, _, _ = batch_data
 
                 imgs = imgs.cuda()
                 audio = audio.cuda()
@@ -178,7 +178,7 @@ def main():
 
         model.train()
 
-    logger.info('best val Miou {} at peoch: {}'.format(max_miou, best_epoch))
+    logger.info('best val Miou {} at epoch: {}'.format(max_miou, best_epoch))
 
 
 if __name__ == '__main__':
