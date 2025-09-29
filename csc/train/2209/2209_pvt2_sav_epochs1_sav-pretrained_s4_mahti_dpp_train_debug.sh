@@ -30,7 +30,7 @@ cd /scratch/project_2005102/sophie/repos/AVSegFormer
 SESSION="s4"
 TRAIN_FILE="dpp_train.py"
 TRAIN_FILE_PATH="scripts/$SESSION/$TRAIN_FILE"
-CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1709/1709_epochs1_sav-pretrained_s4.py"
+CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/2209/2209_epochs1_sav-pretrained_s4.py"
 
 #PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 export PYTHONPATH="${PYTHONPATH}:/scratch/project_2005102/sophie/repos/AVSegFormer"

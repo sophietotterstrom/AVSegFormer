@@ -1,11 +1,11 @@
-DURATION = 10
+DURATION = 5
 
 model = dict(
     type='AVSegFormer',
     neck=None,
     backbone=dict(
         type='pvt_v2_b5',
-        init_weights_path='/scratch/project_2005102/sophie/repos/AVSegFormer/work_dir/0909_AVSegFormer_pvt2_sav_epochs1/MS3_best.pth'),
+        init_weights_path='/scratch/project_2005102/sophie/repos/AVSegFormer/work_dir/0909_AVSegFormer_pvt2_sav_epochs5/MS3_best.pth'),
     vggish=dict(
         freeze_audio_extractor=True,
         pretrained_vggish_model_path='pretrained/vggish-10086976.pth',
@@ -81,6 +81,6 @@ loss = dict(
         mix_loss=0.1),
     loss_type='dice')
 process = dict(
-    num_works=4,
+    num_works=8,
     train_epochs=30,
     freeze_epochs=10)
