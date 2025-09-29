@@ -6,9 +6,9 @@
 #SBATCH --error=./sbatch_logs/%J.log
 #SBATCH --verbose
 #SBATCH --nodes=1
-#SBATCH --partition=gpusmall
-#SBATCH --ntasks-per-node=2
-#SBATCH --gres=gpu:a100:2,nvme:100
+#SBATCH --partition=gpumedium
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:a100:4,nvme:100
 #SBATCH --cpus-per-task=32
 #SBATCH --mem-per-gpu=122500M
 #SBATCH --time=36:00:00
@@ -30,13 +30,16 @@ cd /scratch/project_2005102/sophie/repos/AVSegFormer
 SESSION="s4"
 TRAIN_FILE="dpp_train.py"
 TRAIN_FILE_PATH="scripts/$SESSION/$TRAIN_FILE"
-CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1709/1709_epochs1_sav-pretrained_s4.py"
+CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1709/1709_s4.py"
 
 #PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 export PYTHONPATH="${PYTHONPATH}:/scratch/project_2005102/sophie/repos/AVSegFormer"
 
 export RDZV_HOST=$(hostname)
-export RDZV_PORT=29500
+export RDZV_PORT=29400
+
+#cp /scratch/project_2000936/viertoli/datasets/AVSSBench.tar.gz $LOCAL_SCRATCH
+#tar -xzf $LOCAL_SCRATCH/AVSSBench.tar.gz -C $LOCAL_SCRATCH
 
 srun torchrun \
     --nnodes=$SLURM_JOB_NUM_NODES \
@@ -45,3 +48,4 @@ srun torchrun \
     --rdzv_backend=c10d \
     --rdzv_endpoint="$RDZV_HOST:$RDZV_PORT" \
     scripts/$SESSION/$TRAIN_FILE $CONFIG
+

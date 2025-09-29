@@ -1,4 +1,4 @@
-DURATION = 5
+DURATION = 10
 
 model = dict(
     type='AVSegFormer',
