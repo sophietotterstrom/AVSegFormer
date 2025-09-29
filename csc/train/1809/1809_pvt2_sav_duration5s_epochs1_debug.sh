@@ -1,17 +1,17 @@
 #!/bin/bash
 
-#SBATCH --job-name=avsegformer-sav-train
+#SBATCH --job-name=avsegformer-sav-train-debug
 #SBATCH --account=project_2005102
 #SBATCH --output=./sbatch_logs/%J.log
 #SBATCH --error=./sbatch_logs/%J.log
 #SBATCH --verbose
 #SBATCH --nodes=1
-#SBATCH --partition=gpu
+#SBATCH --partition=gputest
 #SBATCH --ntasks-per-node=2
 #SBATCH --gres=gpu:v100:2,nvme:100
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-gpu=122500M
-#SBATCH --time=10:00:00
+#SBATCH --time=00:15:00
 
 export PATH="/scratch/project_2005102/sophie/segformer_conda/bin:$PATH"
 
@@ -25,5 +25,5 @@ set -e
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
 srun bash train.sh \
     "ms3" \
-    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1809/1809_duration5s_epochs2.py \
+    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1809/1809_duration5s_epochs1.py \
     "sav_train.py"

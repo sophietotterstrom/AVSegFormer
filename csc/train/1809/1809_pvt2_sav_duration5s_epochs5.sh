@@ -11,7 +11,7 @@
 #SBATCH --gres=gpu:v100:2,nvme:100
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-gpu=122500M
-#SBATCH --time=04:00:00
+#SBATCH --time=24:00:00
 
 export PATH="/scratch/project_2005102/sophie/segformer_conda/bin:$PATH"
 
