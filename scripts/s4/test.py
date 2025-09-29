@@ -58,6 +58,7 @@ def main():
                     args.save_dir, dir_name, 'pred_masks')
                 save_mask(output.squeeze(1), mask_save_path,
                           category_list, video_name_list)
+                logger.info(f"INSIDE IF, save to {mask_save_path}, {video_name_list}")
 
             miou = mask_iou(output.squeeze(1), mask)
             avg_meter_miou.add({'miou': miou})
