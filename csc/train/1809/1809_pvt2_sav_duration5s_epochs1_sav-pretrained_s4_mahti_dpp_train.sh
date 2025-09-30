@@ -11,7 +11,7 @@
 #SBATCH --gres=gpu:a100:4,nvme:100
 #SBATCH --cpus-per-task=32
 #SBATCH --mem-per-gpu=122500M
-#SBATCH --time=36:00:00
+#SBATCH --time=6:00:00
 
 export PATH="/scratch/project_2005102/sophie/segformer_conda/bin:$PATH"
 export PYTHONPATH="${PYTHONPATH}:/scratch/project_2005102/sophie/repos/AVSegFormer"
