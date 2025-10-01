@@ -48,6 +48,7 @@ def main():
                 for p in model.parameters()) / 1e6))
 
     # dataset
+    """
     train_dataset = build_dataset(**cfg.dataset.train)
     train_dataloader = torch.utils.data.DataLoader(train_dataset,
                                                    batch_size=cfg.dataset.train.batch_size,
@@ -59,6 +60,39 @@ def main():
     val_dataset = build_dataset(**cfg.dataset.val)
     val_dataloader = torch.utils.data.DataLoader(val_dataset,
                                                  batch_size=cfg.dataset.val.batch_size,
+                                                 shuffle=False,
+                                                 num_workers=cfg.process.num_works,
+                                                 pin_memory=True)
+    """
+    # dataset - Modified to handle multiple datasets
+    if 'train_datasets' in cfg.dataset:
+        # Multiple datasets case
+        train_datasets = []
+        for dataset_cfg in cfg.dataset.train_datasets:
+            train_datasets.append(build_dataset(**dataset_cfg))
+        train_dataset = torch.utils.data.ConcatDataset(train_datasets)
+        
+        val_datasets = []
+        for dataset_cfg in cfg.dataset.val_datasets:
+            val_datasets.append(build_dataset(**dataset_cfg))
+        val_dataset = torch.utils.data.ConcatDataset(val_datasets)
+        
+        batch_size = cfg.dataset.batch_size
+    else:
+        # Single dataset case (backward compatibility)
+        train_dataset = build_dataset(**cfg.dataset.train)
+        val_dataset = build_dataset(**cfg.dataset.val)
+        batch_size = cfg.dataset.train.batch_size
+
+    train_dataloader = torch.utils.data.DataLoader(train_dataset,
+                                                   batch_size=batch_size,
+                                                   shuffle=True,
+                                                   num_workers=cfg.process.num_works,
+                                                   pin_memory=True)
+    max_step = (len(train_dataset) // batch_size) * cfg.process.train_epochs
+    
+    val_dataloader = torch.utils.data.DataLoader(val_dataset,
+                                                 batch_size=batch_size,
                                                  shuffle=False,
                                                  num_workers=cfg.process.num_works,
                                                  pin_memory=True)
