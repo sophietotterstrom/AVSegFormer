@@ -11,13 +11,9 @@
 #SBATCH --gres=gpu:a100:4,nvme:100
 #SBATCH --cpus-per-task=32
 #SBATCH --mem-per-gpu=122500M
-#SBATCH --time=6:00:00
+#SBATCH --time=12:00:00
 
 export PATH="/scratch/project_2005102/sophie/segformer_conda/bin:$PATH"
-export PYTHONPATH="${PYTHONPATH}:/scratch/project_2005102/sophie/repos/AVSegFormer"
-# DPP
-export RDZV_HOST=$(hostname)
-export RDZV_PORT=29400
 
 module load tykky
 
@@ -31,8 +27,10 @@ TRAIN_FILE="dpp_train.py"
 TRAIN_FILE_PATH="scripts/$SESSION/$TRAIN_FILE"
 CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1809/1809_duration5s_epochs1_sav-pretrained_s4.py"
 
-#cp /scratch/project_2000936/viertoli/datasets/AVSSBench.tar.gz $LOCAL_SCRATCH
-#tar -xzf $LOCAL_SCRATCH/AVSSBench.tar.gz -C $LOCAL_SCRATCH
+export PYTHONPATH="${PYTHONPATH}:/scratch/project_2005102/sophie/repos/AVSegFormer"
+# DPP
+export RDZV_HOST=$(hostname)
+export RDZV_PORT=29400
 
 srun torchrun \
     --nnodes=$SLURM_JOB_NUM_NODES \

@@ -75,7 +75,7 @@ def main():
                 avg_meter_F.add({'F_score': F_score})
                 logger.info(f'n_iter: {n_iter}, iou: {miou}, F_score: {F_score}')
 
-                writer.writerow([n_iter, mask_save_path, video_name_list, category_list, miou.item, F_score])
+                writer.writerow([n_iter, video_name_list[0], category_list[0], miou.item(), F_score])
 
                 
 
