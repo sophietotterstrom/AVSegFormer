@@ -45,43 +45,22 @@ model = dict(
     freeze_audio_backbone=True,
     T=DURATION)
 dataset = dict(
-    train_datasets=[  # Changed from 'train' to 'train_datasets'
-        dict(
-            type='SAVDataset',
-            split='train',
-            base_dir='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_000_025_10s_rgb/',
-            anno_csv='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_000_025_10s_rgb/root_metadata_with_split.csv',
-            dir_audio_log_mel='audio_output/logmel_features',
-            img_size=(224, 224),
-        ),
-        dict(
-            type='SAVDataset',
-            split='train',
-            base_dir='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_026_055/',
-            anno_csv='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_026_055/root_metadata_with_split.csv',
-            dir_audio_log_mel='audio_output/logmel_features',
-            img_size=(224, 224),
-        )
-    ],
-    val_datasets=[  # Changed from 'val' to 'val_datasets'
-        dict(
-            type='SAVDataset',
-            split='val',
-            base_dir='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_000_025_10s_rgb/',
-            anno_csv='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_000_025_10s_rgb/root_metadata_with_split.csv',
-            dir_audio_log_mel='audio_output/logmel_features',
-            img_size=(224, 224),
-        ),
-        dict(
-            type='SAVDataset',
-            split='val',
-            base_dir='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_026_055/',
-            anno_csv='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_026_055/root_metadata_with_split.csv',
-            dir_audio_log_mel='audio_output/logmel_features',
-            img_size=(224, 224),
-        )
-    ],
-    batch_size=2,
+    train=dict(
+        type='SAVDataset',
+        split='train',
+        base_dir='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_10s_000-055/',
+        anno_csv='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_10s_000-055/root_metadata_with_split_combined.csv',
+        dir_audio_log_mel='audio_output/logmel_features',
+        img_size=(224, 224),
+        batch_size=1),
+    val=dict(
+        type='SAVDataset',
+        split='val',
+        base_dir='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_10s_000-055/',
+        anno_csv='/scratch/project_2005102/sophie/sav/sav_train_out/sav_train_10s_000-055/root_metadata_with_split_combined.csv',
+        dir_audio_log_mel='audio_output/logmel_features',
+        img_size=(224, 224),
+        batch_size=1),
     test=dict(
         type='S4Dataset',
         split='test',
@@ -90,8 +69,8 @@ dataset = dict(
         dir_audio_log_mel='data/Single-source/s4_data/audio_log_mel',
         dir_mask='data/Single-source/s4_data/gt_masks',
         img_size=(224, 224),
-        batch_size=2),
-)
+        batch_size=1),
+    )
 optimizer = dict(
     type='AdamW',
     lr=2e-5)
