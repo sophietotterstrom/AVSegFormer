@@ -44,8 +44,6 @@ def main():
     # logger
     log_name = time.strftime('%Y%m%d-%H%M%S', time.localtime())
     dir_name = os.path.splitext(os.path.split(args.cfg)[-1])[0]
-    if not os.path.exists(args.log_dir):
-        os.mkdir(args.log_dir, exist_ok=True))
     if not os.path.exists(os.path.join(args.log_dir, dir_name)):
         os.makedirs(os.path.join(args.log_dir, dir_name), exist_ok=True)
 

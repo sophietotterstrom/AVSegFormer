@@ -37,9 +37,10 @@ def main():
     avg_meter_miou = pyutils.AverageMeter('miou')
     avg_meter_F = pyutils.AverageMeter('F_score')
 
-
-
-    csv_path = os.path.join(args.save_dir, dir_name, 'pred_masks')
+    # write csv file with predictions
+    csv_path = os.path.join(args.save_dir, dir_name)
+    if not os.path.exists(csv_path):
+        os.makedirs(csv_path, exist_ok=True)
     write_file = os.path.join(csv_path, "output.csv")
     with open(write_file, mode="w", newline="") as f:
         writer = csv.writer(f)
