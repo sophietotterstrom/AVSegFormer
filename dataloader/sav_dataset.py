@@ -95,6 +95,8 @@ class SAVDataset(Dataset):
         df_one_video = self.df_split.iloc[index]
         video_name = df_one_video[0]
         video_subdir = df_one_video[-1]
+
+        print(f"{video_subdir}/{video_name}")
         
         ######### parse paths #########
         video_path = os.path.join(
@@ -135,11 +137,11 @@ class SAVDataset(Dataset):
             orig_frame_idx = i * FPS
             mask_rle = annotation["masklet"][orig_frame_idx]
             mask_bin = mask_util.decode(mask_rle)
-
-            #print(f"Mask bin unique: {np.unique(mask_bin)}")
             
             mask_tensor = self._process_mask(mask_bin)
             masks.append(mask_tensor)
+        
+        print(f"Mask len {len(masks)}, imgs {len(imgs)}")
         
         imgs_tensor = torch.stack(imgs, dim=0)
         masks_tensor = torch.stack(masks, dim=0)
