@@ -9,6 +9,8 @@ pip install -U setuptools
 pip install ninja
 pip install pycocotools
 
+pip install "opencv-python>=4.10,<4.11"
+
 # for first time running this post-install script, comment these out
-cd /scratch/project_2005102/sophie/repos/AVSegFormer/ops
-sh make.sh
+#cd /scratch/project_2005102/sophie/repos/AVSegFormer/ops
+#sh make.sh
