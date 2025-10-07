@@ -22,7 +22,7 @@ def main():
 
     # model
     model = build_model(**cfg.model)
-    model.load_state_dict(torch.load(args.weights))
+    model.load_state_dict(torch.load(args.weights, map_location='cuda:0'))
     model = torch.nn.DataParallel(model).cuda()
     model.eval()
     logger.info('Load trained model %s' % args.weights)
