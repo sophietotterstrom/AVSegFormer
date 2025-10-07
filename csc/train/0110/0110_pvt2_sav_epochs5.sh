@@ -21,6 +21,8 @@ module load cuda/11
 
 set -e
 
+pip list
+
 # see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
 srun bash train.sh \
