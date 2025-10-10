@@ -31,7 +31,7 @@ TRAIN_FILE="dpp_train.py"
 TRAIN_FILE_PATH="scripts/$SESSION/$TRAIN_FILE"
 CONFIG="/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/2909/2909_epochs5_sav-pretrained_s4.py"
 
-
+export OPENCV_FFMPEG_CAPTURE_OPTIONS="rtsp_flags;tcp"
 
 srun torchrun \
     --nnodes=$SLURM_JOB_NUM_NODES \
