@@ -14,7 +14,9 @@ from model import build_model
 from dataloader import build_dataset
 from loss import IouSemanticAwareLoss
 
-DURATION = 10
+import mlflow
+mlflow.set_tracking_uri("/scratch/project_2005102/sophie/mlruns")
+mlflow.start_run(run_name=os.getenv("SLURM_JOB_ID"))
 
 def main():
     # Fix seed
@@ -114,12 +116,14 @@ def main():
         for n_iter, batch_data in enumerate(train_dataloader):
             imgs, audio, mask, _ = batch_data
 
+            #logger.info(f"imgs {len(imgs)}, {imgs[0].shape}   |    audio {len(audio)}, {audio[0].shape}   |   mask {len(mask)}, {mask[0].shape}")
+
             imgs = imgs.cuda()
             audio = audio.cuda()
             mask = mask.cuda()
             B, frame, C, H, W = imgs.shape
             imgs = imgs.view(B * frame, C, H, W)
-            mask_num = DURATION
+            mask_num = args.duration
             mask = mask.view(B * mask_num, 1, H, W)
             audio = audio.view(-1, audio.shape[2],
                                audio.shape[3], audio.shape[4])
@@ -128,6 +132,10 @@ def main():
             loss, loss_dict = IouSemanticAwareLoss(
                 output, mask_feature, mask, **cfg.loss)
             loss_util.add_loss(loss, loss_dict)
+
+            mlflow.log_metric("loss", loss)
+
+
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -178,6 +186,8 @@ def main():
         model.train()
     logger.info('best val Miou {} at peoch: {}'.format(max_miou, best_epoch))
 
+    
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -188,6 +198,7 @@ if __name__ == '__main__':
                         default='work_dir', help='dir to save checkpoints')
     parser.add_argument("--session_name", default="MS3",
                         type=str, help="the MS3 setting")
+    parser.add_argument("--duration", default=10, type=int, help="Duration of dataset clips, defaults to 10")
 
     args = parser.parse_args()
     main()
