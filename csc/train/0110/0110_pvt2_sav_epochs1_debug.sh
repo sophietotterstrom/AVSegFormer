@@ -16,6 +16,7 @@
 export PATH="/scratch/project_2005102/sophie/segformer_conda/bin:$PATH"
 
 module load tykky
+module load git
 module load gcc/11
 module load cuda/11
 
@@ -25,8 +26,7 @@ pip list
 
 # see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
-
-PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
-srun python scripts/ms3/sav_train.py \
-    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1809/1809_duration5s_epochs1.py \
-    --duration 5
+srun bash train.sh \
+    "ms3" \
+    /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/0110/0110_epochs1.py \
+    "sav_train.py"

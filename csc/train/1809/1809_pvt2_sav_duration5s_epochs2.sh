@@ -21,9 +21,12 @@ module load cuda/11
 
 set -e
 
+pip list
+
 # see the train.sh for details and configs
 cd /scratch/project_2005102/sophie/repos/AVSegFormer
-srun bash train.sh \
-    "ms3" \
+
+PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
+srun python scripts/ms3/sav_train.py \
     /scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/1809/1809_duration5s_epochs2.py \
-    "sav_train.py"
+    --duration 5
