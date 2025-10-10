@@ -1,0 +1,7 @@
+job_name: "avsegformer-s4-train"
+session: "s4"
+train_file: "dpp_train.py"
+config_path: "/scratch/project_2005102/sophie/repos/AVSegFormer/config/sav/pvt2/0110/0110_epochs2_sav-pretrained_s4.py"
+nproc_per_node: 4
+num_gpus: 4
+duration: "12:00:00"
