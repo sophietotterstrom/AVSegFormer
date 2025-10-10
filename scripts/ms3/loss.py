@@ -12,11 +12,12 @@ def F5_IoU_BCELoss(pred_mask, five_gt_masks):
     five_gt_masks: ground truth mask of the total five frames, shape: [bs*5, 1, 224, 224]
     """
     assert len(pred_mask.shape) == 4
-    pred_mask = torch.sigmoid(pred_mask)  # [bs*5, 1, 224, 224]
+    #pred_mask = torch.sigmoid(pred_mask)  # [bs*5, 1, 224, 224]
     # five_gt_masks = five_gt_masks.view(-1, 1, five_gt_masks.shape[-2], five_gt_masks.shape[-1]) # [bs*5, 1, 224, 224]
-    loss = nn.BCELoss()(pred_mask, five_gt_masks)
-
-    return loss
+    #loss = nn.BCELoss()(pred_mask, five_gt_masks)
+    #return loss
+    loss_fn = nn.BCEWithLogitsLoss(reduction='mean')
+    return loss_fn(pred_mask, five_gt_masks)
 
 
 def F5_Dice_loss(pred_mask, five_gt_masks):
@@ -52,13 +53,15 @@ def IouSemanticAwareLoss(pred_mask, mask_feature, gt_mask, weight_dict, loss_typ
 
     iou_loss = weight_dict['iou_loss'] * loss_func(pred_mask, gt_mask)
     total_loss += iou_loss
-    loss_dict['iou_loss'] = iou_loss.item()
+    #loss_dict['iou_loss'] = iou_loss.item()
+    loss_dict['iou_loss'] = iou_loss.detach().item()
 
     mask_feature = torch.mean(mask_feature, dim=1, keepdim=True)
     mask_feature = F.interpolate(
         mask_feature, gt_mask.shape[-2:], mode='bilinear', align_corners=False)
     mix_loss = weight_dict['mix_loss']*loss_func(mask_feature, gt_mask)
     total_loss += mix_loss
-    loss_dict['mix_loss'] = mix_loss.item()
+    #loss_dict['mix_loss'] = mix_loss.item()
+    loss_dict['mix_loss'] = mix_loss.detach().item()
 
     return total_loss, loss_dict
