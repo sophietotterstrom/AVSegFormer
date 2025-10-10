@@ -16,6 +16,7 @@ import json
 import pycocotools.mask as mask_util
 from typing import List
 
+DURATION = 10
 FPS = 24
 
 
@@ -51,7 +52,7 @@ class SAVDataset(Dataset):
         super(SAVDataset, self).__init__()
 
         self.split = split
-        self.mask_num = 5
+        self.mask_num = DURATION
         self.cfg = cfg
 
         df_all = pd.read_csv(cfg.anno_csv, sep=',')
@@ -95,8 +96,6 @@ class SAVDataset(Dataset):
         df_one_video = self.df_split.iloc[index]
         video_name = df_one_video[0]
         video_subdir = df_one_video[-1]
-
-        print(f"{video_subdir}/{video_name}")
         
         ######### parse paths #########
         video_path = os.path.join(
@@ -129,9 +128,16 @@ class SAVDataset(Dataset):
         imgs = []
         masks = []
 
+        assert len(frames) == DURATION, f"frames needs to equal duration ({DURATION}), now {len(frames)}, for {video_path}"
+
         for i, frame in enumerate(frames):
             img_tensor = self._process_frame(frame)
             imgs.append(img_tensor)
+
+            assert isinstance(img_tensor, torch.Tensor), f"Output is not a torch.Tensor for {video_path}"
+            assert img_tensor.ndim == 3, f"Tensor must have 3 dimensions (C,H,W), got {img_tensor.ndim}. for {video_path}"
+            assert img_tensor.shape[0] in [1, 3], f"Tensor must have 1 or 3 channels, got {img_tensor.shape[0]}. for {video_path}"
+
 
             # find frame specific mask and decode
             orig_frame_idx = i * FPS
@@ -141,7 +147,8 @@ class SAVDataset(Dataset):
             mask_tensor = self._process_mask(mask_bin)
             masks.append(mask_tensor)
         
-        print(f"Mask len {len(masks)}, imgs {len(imgs)}")
+        assert len(imgs) == DURATION, f"len imgs {len(imgs)} != {DURATION} for {video_path}"
+        assert len(masks) == DURATION, f"len masks {len(masks)} != {DURATION} for {video_path}"
         
         imgs_tensor = torch.stack(imgs, dim=0)
         masks_tensor = torch.stack(masks, dim=0)
